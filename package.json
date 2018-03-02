@@ -1,0 +1,30 @@
+{
+  "name": "plenty-server",
+  "version": "1.0.0",
+  "description": "Plenty server",
+  "author": "Gersom van Ginkel <opensource@gersom.nl>",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start:dev": "nodemon src/index.js",
+    "serve": "sequelize db:migrate && node src/index.js"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.2",
+    "dotenv": "^4.0.0",
+    "express": "^4.16.2",
+    "joi": "^13.1.2",
+    "lodash": "^4.17.5",
+    "pg": "^7.4.1",
+    "reflect-metadata": "^0.1.12",
+    "typeorm": "^0.1.14"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0",
+    "prettier": "^1.4.0"
+  },
+  "engines": {
+    "node": "8.9.4"
+  }
+}
