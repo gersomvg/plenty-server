@@ -13,17 +13,17 @@
     "axios": "^0.18.0",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
-    "dotenv": "^4.0.0",
+    "dotenv": "^5.0.1",
     "express": "^4.16.2",
     "joi": "^13.1.2",
     "lodash": "^4.17.5",
     "pg": "^7.4.1",
     "reflect-metadata": "^0.1.12",
-    "typeorm": "^0.1.14"
+    "typeorm": "^0.1.16"
   },
   "devDependencies": {
-    "nodemon": "^1.11.0",
-    "prettier": "^1.4.0"
+    "nodemon": "^1.17.1",
+    "prettier": "^1.11.1"
   },
   "engines": {
     "node": "8.9.4"

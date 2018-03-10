@@ -1,23 +1,38 @@
+// Initializes dotenv
 require('./src/config');
 
-const app = require('express')();
+const initializeDatabaseConnection = async () => {
+    try {
+        require('reflect-metadata');
+        await require('typeorm').createConnection();
+        initializeExpress();
+    } catch (e) {
+        console.error('Could not make a connection with the database:', e);
+    }
+};
 
-// Enable CORS headers
-app.use(
-    require('cors')({
-        origin: true,
-        methods: ['GET'],
-    })
-);
+const initializeExpress = () => {
+    const app = require('express')();
 
-// Enable automatic parsing of JSON bodies
-app.use(require('body-parser').json());
+    // Enable CORS headers
+    app.use(
+        require('cors')({
+            origin: true,
+            methods: ['GET'],
+        }),
+    );
 
-// Disable express mention in headers
-app.disable('x-powered-by');
+    // Enable automatic parsing of JSON bodies
+    app.use(require('body-parser').json());
 
-// Add versioning to API paths
-app.use('/api/v1', require('./src/routes'));
+    // Disable express mention in headers
+    app.disable('x-powered-by');
 
-// Start listening for requests
-app.listen(process.env.PORT, () => console.log(`App listening from ${process.env.PORT}`));
+    // Add versioning to API paths
+    app.use('/api/v1', require('./src/routes'));
+
+    // Start listening for requests
+    app.listen(process.env.PORT, () => console.log(`App listening from ${process.env.PORT}`));
+};
+
+initializeDatabaseConnection();
