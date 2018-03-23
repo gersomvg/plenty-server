@@ -9,7 +9,8 @@
     "start:dev": "nodemon src/index.js",
     "start": "node src/index.js",
     "seed": "node src/seeds/index.js",
-    "db:reset": "knex migrate:rollback && knex migrate:latest && knex seed:run"
+    "db:reset": "knex migrate:rollback && knex migrate:latest && knex seed:run",
+    "precommit": "lint-staged"
   },
   "dependencies": {
     "axios": "^0.18.0",
