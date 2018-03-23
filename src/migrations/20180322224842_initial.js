@@ -22,10 +22,10 @@ exports.up = async (knex, Promise) => {
         table.string('name').notNullable();
         table.string('name_unaccented').notNullable();
         table.string('filename').notNullable();
-        table.enu('classification', ['YES', 'ALMOST', 'LIKELY', 'NO']).notNullable();
+        table.enu('classification', ['YES', 'MOSTLY', 'POSSIBLY', 'NO']).notNullable();
         table.string('explanation', 1000);
         table
-            .integer('brand_id')
+            .integer('brandId')
             .references('brand.id')
             .notNullable();
         table.timestamps(useTimestamps, defaultToNow);
@@ -50,9 +50,35 @@ exports.up = async (knex, Promise) => {
             .notNullable();
         table.timestamps(useTimestamps, defaultToNow);
     });
+    await knex.schema.createTable('category', table => {
+        table.increments();
+        table.string('name').notNullable();
+    });
+    await knex('category').insert([
+        {id: 1, name: 'Broodbeleg'},
+        {id: 2, name: 'Zoete tussendoortjes'},
+        {id: 3, name: 'Hartige tussendoortjes'},
+        {id: 4, name: 'Vleesvervangers'},
+        {id: 5, name: 'Zuivelvervangers'},
+    ]);
+    await knex.raw('ALTER SEQUENCE category_id_seq RESTART WITH 6');
+    await knex.schema.createTable('product_category', table => {
+        table
+            .integer('productId')
+            .references('product.id')
+            .notNullable();
+        table
+            .integer('categoryId')
+            .references('category.id')
+            .notNullable();
+        table.primary(['productId', 'categoryId']);
+        table.timestamps(useTimestamps, defaultToNow);
+    });
 };
 
 exports.down = async (knex, Promise) => {
+    await knex.schema.dropTableIfExists('product_category');
+    await knex.schema.dropTableIfExists('category');
     await knex.schema.dropTableIfExists('barcode');
     await knex.schema.dropTableIfExists('product_shop');
     await knex.schema.dropTableIfExists('product');

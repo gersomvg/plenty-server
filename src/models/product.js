@@ -1,13 +1,9 @@
-const {Model, snakeCaseMappers} = require('objection');
+const {Model} = require('objection');
 const unaccent = require('../utils/unaccent');
 
 class ProductModel extends Model {
     static get tableName() {
         return 'product';
-    }
-
-    static get columnNameMappers() {
-        return snakeCaseMappers();
     }
 
     static get virtualAttributes() {
@@ -25,7 +21,7 @@ class ProductModel extends Model {
                 relation: Model.BelongsToOneRelation,
                 modelClass: Brand,
                 join: {
-                    from: 'product.brand_id',
+                    from: 'product.brandId',
                     to: 'brand.id',
                 },
             },

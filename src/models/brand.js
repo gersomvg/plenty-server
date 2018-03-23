@@ -1,12 +1,8 @@
-const {Model, snakeCaseMappers} = require('objection');
+const {Model} = require('objection');
 
 class BrandModel extends Model {
     static get tableName() {
         return 'brand';
-    }
-
-    static get columnNameMappers() {
-        return snakeCaseMappers();
     }
 
     static get relationMappings() {
@@ -17,7 +13,7 @@ class BrandModel extends Model {
                 modelClass: Product,
                 join: {
                     from: 'brand.id',
-                    to: 'product.brand_id',
+                    to: 'product.brandId',
                 },
             },
         };

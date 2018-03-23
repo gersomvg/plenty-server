@@ -1,8 +1,9 @@
-if (!process.env.PG_CONNECTION_STRING) require('dotenv').config();
+if (!process.env.DATABASE_URL) require('dotenv').config();
+const {knexSnakeCaseMappers} = require('objection');
 
 const common = {
     client: 'pg',
-    connection: process.env.PG_CONNECTION_STRING,
+    connection: process.env.DATABASE_URL,
     ssl: true,
     migrations: {
         tableName: 'knex_migrations',
@@ -11,6 +12,10 @@ const common = {
     seeds: {
         directory: './src/seeds',
     },
+
+    // These mappers make sure all parts of the application work with camelCasing, making snake_case
+    // only visible in the actual database schema and when writing raw queries
+    ...knexSnakeCaseMappers(),
 };
 
 module.exports = {
@@ -22,8 +27,8 @@ module.exports = {
     },
     production: {
         ...common,
-
-        // Disable seeds to prevent them from running on production
+        // Making sure that it is impossible to run seeds on production, because they start with a
+        // dectructive deletion of all table rows
         seeds: {loadExtensions: []},
     },
 };
