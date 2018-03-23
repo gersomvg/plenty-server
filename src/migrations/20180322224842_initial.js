@@ -21,6 +21,8 @@ exports.up = async (knex, Promise) => {
         table.increments();
         table.string('name').notNullable();
         table.string('filename').notNullable();
+        table.enu('classification', ['YES', 'ALMOST', 'LIKELY', 'NO']).notNullable();
+        table.string('explanation', 1000);
         table
             .integer('brand_id')
             .references('brand.id')
