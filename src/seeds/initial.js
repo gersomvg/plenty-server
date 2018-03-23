@@ -17,6 +17,7 @@ exports.seed = async (knex, Promise) => {
         {
             id: 1,
             name: 'Petit Paté',
+            name_unaccented: 'Petit Pate',
             brand_id: 1,
             filename: 'petit-pate.jpg',
             classification: 'YES',
@@ -25,6 +26,7 @@ exports.seed = async (knex, Promise) => {
         {
             id: 2,
             name: "Petit Filet à l'Americain",
+            name_unaccented: "Petit Filet a l'Americain",
             brand_id: 1,
             filename: 'petit-file.jpg',
             classification: 'YES',
@@ -33,6 +35,7 @@ exports.seed = async (knex, Promise) => {
         {
             id: 3,
             name: 'Boterhamworst',
+            name_unaccented: 'Boterhamworst',
             brand_id: 1,
             filename: 'boterhamworst.jpg',
             classification: 'YES',
@@ -41,6 +44,7 @@ exports.seed = async (knex, Promise) => {
         {
             id: 4,
             name: 'Kipworst',
+            name_unaccented: 'Kipworst',
             brand_id: 1,
             filename: 'kipworst.jpg',
             classification: 'NO',
@@ -49,6 +53,7 @@ exports.seed = async (knex, Promise) => {
         {
             id: 5,
             name: 'Italiaanse Worst',
+            name_unaccented: 'Italiaanse Worst',
             brand_id: 1,
             filename: 'italiaanse-worst.jpg',
             classification: 'NO',
@@ -57,6 +62,7 @@ exports.seed = async (knex, Promise) => {
         {
             id: 6,
             name: 'Boterhamworst Provençaal',
+            name_unaccented: 'Boterhamworst Provencaal',
             brand_id: 1,
             filename: 'boterhamworst-provencaal.jpg',
             classification: 'YES',
@@ -64,7 +70,8 @@ exports.seed = async (knex, Promise) => {
         },
         {
             id: 7,
-            name: 'Gelderse worst',
+            name: 'Gelderse Worst',
+            name_unaccented: 'Gelderse Worst',
             brand_id: 1,
             filename: 'gelderse-worst.jpg',
             classification: 'NO',
@@ -73,6 +80,7 @@ exports.seed = async (knex, Promise) => {
         {
             id: 8,
             name: 'Oranjekoek Stukjes',
+            name_unaccented: 'Oranjekoek Stukjes',
             brand_id: 2,
             filename: 'oranjekoek-stukjes.jpg',
             classification: 'ALMOST',
@@ -81,6 +89,7 @@ exports.seed = async (knex, Promise) => {
         {
             id: 9,
             name: 'Creamy Kokos Naturel',
+            name_unaccented: 'Creamy Kokos Naturel',
             brand_id: 3,
             filename: 'creamy-kokos-naturel.jpg',
             classification: 'YES',
@@ -88,6 +97,7 @@ exports.seed = async (knex, Promise) => {
         {
             id: 10,
             name: 'Country Partjes Rozemarijn Zeezout',
+            name_unaccented: 'Country Partjes Rozemarijn Zeezout',
             brand_id: 4,
             filename: 'country-partjes.jpg',
             classification: 'LIKELY',

@@ -20,6 +20,7 @@ exports.up = async (knex, Promise) => {
     await knex.schema.createTable('product', table => {
         table.increments();
         table.string('name').notNullable();
+        table.string('name_unaccented').notNullable();
         table.string('filename').notNullable();
         table.enu('classification', ['YES', 'ALMOST', 'LIKELY', 'NO']).notNullable();
         table.string('explanation', 1000);
