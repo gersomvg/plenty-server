@@ -7,11 +7,20 @@ class ProductModel extends Model {
     }
 
     static get virtualAttributes() {
-        return ['fileUrl'];
+        return ['imageUrl', 'thumbUrl'];
     }
 
-    get fileUrl() {
+    get imageUrl() {
         return `${process.env.STORAGE_URL}${process.env.STORAGE_PRODUCTS_FOLDER}/${this.filename}`;
+    }
+
+    get thumbUrl() {
+        const thumbFileName = [
+            this.filename.slice(0, this.filename.length - 4),
+            '.small',
+            this.filename.slice(-4),
+        ].join('');
+        return `${process.env.STORAGE_URL}${process.env.STORAGE_PRODUCTS_FOLDER}/${thumbFileName}`;
     }
 
     static get relationMappings() {
