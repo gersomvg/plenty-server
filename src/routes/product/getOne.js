@@ -4,7 +4,7 @@ module.exports = async (req, res) => {
     try {
         const product = await Product.query()
             .findById(req.params.id)
-            .eager('brand');
+            .eager('[brand, shops]');
         if (product) {
             res.send(product);
         } else {

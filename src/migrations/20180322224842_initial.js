@@ -20,9 +20,9 @@ exports.up = async (knex, Promise) => {
     await knex.schema.createTable('product', table => {
         table.increments();
         table.string('name').notNullable();
-        table.string('name_unaccented').notNullable();
+        table.string('nameUnaccented').notNullable();
         table.string('filename').notNullable();
-        table.enu('classification', ['YES', 'MOSTLY', 'POSSIBLY', 'NO']).notNullable();
+        table.enu('classification', ['YES', 'LIKELY', 'UNLIKELY', 'NO']).notNullable();
         table.string('explanation', 1000);
         table
             .integer('brandId')
@@ -30,7 +30,7 @@ exports.up = async (knex, Promise) => {
             .notNullable();
         table.timestamps(useTimestamps, defaultToNow);
     });
-    await knex.schema.createTable('product_shop', table => {
+    await knex.schema.createTable('productShop', table => {
         table
             .integer('productId')
             .references('product.id')
@@ -62,7 +62,7 @@ exports.up = async (knex, Promise) => {
         {id: 5, name: 'Zuivelvervangers'},
     ]);
     await knex.raw('ALTER SEQUENCE category_id_seq RESTART WITH 6');
-    await knex.schema.createTable('product_category', table => {
+    await knex.schema.createTable('productCategory', table => {
         table
             .integer('productId')
             .references('product.id')
@@ -77,10 +77,10 @@ exports.up = async (knex, Promise) => {
 };
 
 exports.down = async (knex, Promise) => {
-    await knex.schema.dropTableIfExists('product_category');
+    await knex.schema.dropTableIfExists('productCategory');
     await knex.schema.dropTableIfExists('category');
     await knex.schema.dropTableIfExists('barcode');
-    await knex.schema.dropTableIfExists('product_shop');
+    await knex.schema.dropTableIfExists('productShop');
     await knex.schema.dropTableIfExists('product');
     await knex.schema.dropTableIfExists('shop');
     await knex.schema.dropTableIfExists('brand');

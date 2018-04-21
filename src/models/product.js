@@ -25,6 +25,7 @@ class ProductModel extends Model {
 
     static get relationMappings() {
         const Brand = require('./brand');
+        const Shop = require('./shop');
         return {
             brand: {
                 relation: Model.BelongsToOneRelation,
@@ -32,6 +33,18 @@ class ProductModel extends Model {
                 join: {
                     from: 'product.brandId',
                     to: 'brand.id',
+                },
+            },
+            shops: {
+                relation: Model.ManyToManyRelation,
+                modelClass: Shop,
+                join: {
+                    from: 'product.id',
+                    to: 'shop.code',
+                    through: {
+                        from: 'productShop.productId',
+                        to: 'productShop.shopCode',
+                    },
                 },
             },
         };

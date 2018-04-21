@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
         const products = await Product.query()
             .where('name_unaccented', 'ilike', getLikeString(req.query.name))
             .range(offset, limit + offset - 1)
-            .eager('brand');
+            .eager('[brand, shops]');
 
         let nextLink;
         const hasNext = products.total > limit + offset;
