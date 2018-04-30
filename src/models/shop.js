@@ -5,6 +5,14 @@ class ShopModel extends Model {
         return 'shop';
     }
 
+    static get virtualAttributes() {
+        return ['imageUrl'];
+    }
+
+    get imageUrl() {
+        return `${process.env.STORAGE_URL}${process.env.STORAGE_SHOPS_FOLDER}/${this.code}.png`;
+    }
+
     static get relationMappings() {
         const Product = require('./product');
         return {
