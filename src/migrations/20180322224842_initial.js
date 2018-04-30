@@ -22,7 +22,7 @@ exports.up = async (knex, Promise) => {
         table.string('name').notNullable();
         table.string('nameUnaccented').notNullable();
         table.string('filename').notNullable();
-        table.enu('classification', ['YES', 'LIKELY', 'UNLIKELY', 'NO']).notNullable();
+        table.enu('classification', ['YES', 'MAYBE', 'NO']).notNullable();
         table.string('explanation', 1000);
         table
             .integer('brandId')

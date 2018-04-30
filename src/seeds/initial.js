@@ -83,7 +83,7 @@ exports.seed = async (knex, Promise) => {
             name_unaccented: 'Oranjekoek Stukjes',
             brandId: 2,
             filename: 'oranjekoek-stukjes.jpg',
-            classification: 'UNLIKELY',
+            classification: 'NO',
             explanation: 'Bevat vitamine D3, dat meestal uit schapenwol wordt gewonnen',
         },
         {
@@ -100,7 +100,7 @@ exports.seed = async (knex, Promise) => {
             name_unaccented: 'Country Partjes Rozemarijn Zeezout',
             brandId: 4,
             filename: 'country-partjes.jpg',
-            classification: 'LIKELY',
+            classification: 'MAYBE',
         },
     ]);
     await knex.raw('ALTER SEQUENCE product_id_seq RESTART WITH 11');
