@@ -135,4 +135,8 @@ exports.seed = async (knex, Promise) => {
         {productId: 8, categoryId: 2},
         {productId: 9, categoryId: 5},
     ]);
+    await knex('barcode').insert([
+        {code: '0123456789999', productId: 1},
+        {code: '1123456789998', productId: 8},
+    ]);
 };

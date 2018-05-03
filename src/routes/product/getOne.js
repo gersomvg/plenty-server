@@ -11,7 +11,7 @@ module.exports = async (req, res) => {
             res.status(400).send({error: 'No product found for this ID'});
         }
     } catch (e) {
-        console.error('❌  GET /product/productId: ', e.message);
+        console.error('❌  GET /product/{id}: ', e.message);
         res.status(500).send({error: 'Something went wrong'});
     }
 };

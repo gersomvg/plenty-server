@@ -25,6 +25,7 @@ class ProductModel extends Model {
 
     static get relationMappings() {
         const Brand = require('./brand');
+        const Barcode = require('./barcode');
         const Shop = require('./shop');
         return {
             brand: {
@@ -33,6 +34,14 @@ class ProductModel extends Model {
                 join: {
                     from: 'product.brandId',
                     to: 'brand.id',
+                },
+            },
+            barcode: {
+                relation: Model.HasOneRelation,
+                modelClass: Barcode,
+                join: {
+                    from: 'product.id',
+                    to: 'barcode.productId',
                 },
             },
             shops: {
