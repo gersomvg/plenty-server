@@ -4,7 +4,7 @@ module.exports = async (req, res) => {
     try {
         const barcode = await Barcode.query()
             .findOne({code: req.params.barcode})
-            .eager('product');
+            .eager('[product, product.brand, product.shops]');
         //.eager('[product, product.brand, product.shops]');
         if (barcode) {
             res.send(barcode.product);
