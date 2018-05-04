@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
         if (product) {
             res.send(product);
         } else {
-            res.status(400).send({error: 'No product found for this ID'});
+            res.status(404).send({error: 'No product found for this ID'});
         }
     } catch (e) {
         console.error('❌  GET /product/{id}: ', e.message);

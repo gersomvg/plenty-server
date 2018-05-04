@@ -9,7 +9,7 @@ module.exports = async (req, res) => {
         if (barcode) {
             res.send(barcode.product);
         } else {
-            res.status(400).send({error: 'No product found for this barcode'});
+            res.status(404).send({error: 'No product found for this barcode'});
         }
     } catch (e) {
         console.error('❌  GET /product/barcode/{barcode}: ', e.message);
