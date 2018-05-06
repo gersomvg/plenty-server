@@ -6,4 +6,6 @@ router.get('/product/barcode/:barcode', require('./product/getOneByBarcode'));
 
 router.get('/shop', require('./shop/get'));
 
+router.get('/category', require('./category/get'));
+
 module.exports = router;
