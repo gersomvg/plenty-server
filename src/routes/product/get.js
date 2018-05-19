@@ -9,6 +9,10 @@ module.exports = async (req, res) => {
     try {
         const querySchema = Joi.object().keys({
             name: Joi.string().allow(''),
+            categoryId: Joi.number().integer(),
+            shopCode: Joi.string()
+                .alphanum()
+                .max(32),
             limit: Joi.number()
                 .integer()
                 .min(1)
@@ -23,13 +27,22 @@ module.exports = async (req, res) => {
         const limit = Number(req.query.limit || 25);
         const offset = Number(req.query.offset || 0);
 
-        const processUserInput = string => escapeWhereLikeInput(unaccent(string));
-        const getLikeString = string => (string ? `%${processUserInput(string)}%` : '%%');
-
-        const products = await Product.query()
-            .where('name_unaccented', 'ilike', getLikeString(req.query.name))
-            .range(offset, limit + offset - 1)
-            .eager('[brand, shops]');
+        const query = Product.query();
+        if (req.query.name) {
+            const processedUserInput = escapeWhereLikeInput(unaccent(req.query.name));
+            const likeString = `%${processedUserInput}%`;
+            query.andWhere('name_unaccented', 'ilike', likeString);
+        }
+        if (req.query.shopCode) {
+            query.innerJoin('productShop', 'product.id', 'productShop.productId');
+            query.andWhere('productShop.shopCode', req.query.shopCode);
+        }
+        if (req.query.categoryId) {
+            query.innerJoin('productCategory', 'product.id', 'productCategory.productId');
+            query.andWhere('productCategory.categoryId', req.query.categoryId);
+        }
+        query.range(offset, limit + offset - 1).eager('[brand, shops]');
+        const products = await query;
 
         let nextLink;
         const hasNext = products.total > limit + offset;
