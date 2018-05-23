@@ -26,7 +26,7 @@ class BarcodeModel extends Model {
     static get jsonSchema() {
         return {
             type: 'object',
-            required: ['code'],
+            required: ['code', 'productId'],
             properties: {
                 code: {type: 'string', pattern: '\\S+', maxLength: 255},
                 productId: {type: 'integer'},

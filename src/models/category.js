@@ -29,7 +29,7 @@ class CategoryModel extends Model {
             required: ['name'],
             properties: {
                 id: {type: 'integer'},
-                name: {type: 'string', pattern: '\\S+', minLength: 1, maxLength: 255},
+                name: {type: 'string', pattern: '\\S+', maxLength: 255},
             },
         };
     }

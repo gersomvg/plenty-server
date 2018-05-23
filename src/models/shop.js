@@ -42,8 +42,8 @@ class ShopModel extends Model {
             type: 'object',
             required: ['code', 'name'],
             properties: {
-                code: {type: 'string', pattern: '\\S+', minLength: 1, maxLength: 32},
-                name: {type: 'string', pattern: '\\S+', minLength: 1, maxLength: 255},
+                code: {type: 'string', pattern: '[a-z]+', maxLength: 32},
+                name: {type: 'string', pattern: '\\S+', maxLength: 255},
             },
         };
     }
