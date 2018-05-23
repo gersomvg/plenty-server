@@ -5,12 +5,18 @@ class ShopModel extends Model {
         return 'shop';
     }
 
+    static get idColumn() {
+        return 'code';
+    }
+
     static get virtualAttributes() {
         return ['imageUrl'];
     }
 
     get imageUrl() {
-        return `${process.env.STORAGE_URL}${process.env.STORAGE_SHOPS_FOLDER}/${this.code}.png`;
+        return `https://${process.env.AWS_BUCKET}.${process.env.AWS_ENDPOINT}/shops/${
+            this.code
+        }.png`;
     }
 
     static get relationMappings() {

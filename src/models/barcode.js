@@ -5,6 +5,10 @@ class BarcodeModel extends Model {
         return 'barcode';
     }
 
+    static get idColumn() {
+        return 'code';
+    }
+
     static get relationMappings() {
         const Product = require('./product');
         return {
@@ -22,9 +26,9 @@ class BarcodeModel extends Model {
     static get jsonSchema() {
         return {
             type: 'object',
-            required: ['name'],
+            required: ['code'],
             properties: {
-                code: {type: 'string', pattern: '\\S+', minLength: 1, maxLength: 255},
+                code: {type: 'string', pattern: '\\S+', maxLength: 255},
                 productId: {type: 'integer'},
             },
         };

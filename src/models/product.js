@@ -1,6 +1,13 @@
 const {Model} = require('objection');
 const unaccent = require('../utils/unaccent');
 
+const getFileUrl = (filename, size) => {
+    const parts = filename.split('.');
+    const extension = parts.pop();
+    const newFilename = `${parts.join('')}.${size}.${extension}`;
+    return `https://${process.env.AWS_BUCKET}.${process.env.AWS_ENDPOINT}/products/${newFilename}`;
+};
+
 class ProductModel extends Model {
     static get tableName() {
         return 'product';
@@ -11,16 +18,11 @@ class ProductModel extends Model {
     }
 
     get imageUrl() {
-        return `${process.env.STORAGE_URL}${process.env.STORAGE_PRODUCTS_FOLDER}/${this.filename}`;
+        return getFileUrl(this.filename, 'large');
     }
 
     get thumbUrl() {
-        const thumbFileName = [
-            this.filename.slice(0, this.filename.length - 4),
-            '.small',
-            this.filename.slice(-4),
-        ].join('');
-        return `${process.env.STORAGE_URL}${process.env.STORAGE_PRODUCTS_FOLDER}/${thumbFileName}`;
+        return getFileUrl(this.filename, 'small');
     }
 
     static get relationMappings() {
@@ -37,8 +39,8 @@ class ProductModel extends Model {
                     to: 'brand.id',
                 },
             },
-            barcode: {
-                relation: Model.HasOneRelation,
+            barcodes: {
+                relation: Model.HasManyRelation,
                 modelClass: Barcode,
                 join: {
                     from: 'product.id',
@@ -75,15 +77,18 @@ class ProductModel extends Model {
     static get jsonSchema() {
         return {
             type: 'object',
-            required: ['name', 'filename', 'brandId'],
+            required: ['name', 'filename', 'classification', 'brandId'],
             properties: {
                 id: {type: 'integer'},
-                name: {type: 'string', pattern: '\\S+', minLength: 1, maxLength: 255},
+                name: {type: 'string', pattern: '\\S+', maxLength: 255},
+                explanation: {type: 'string', maxLength: 1000},
                 filename: {
                     type: 'string',
                     pattern: '^[\\w,\\s-]+.[A-Za-z]{3,4}$',
-                    minLength: 1,
                     maxLength: 255,
+                },
+                classification: {
+                    enum: ['YES', 'MAYBE', 'NO'],
                 },
                 brandId: {type: 'integer'},
             },

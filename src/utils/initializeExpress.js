@@ -1,11 +1,13 @@
+const express = require('express');
+
 const initializeExpress = () => {
-    const app = require('express')();
+    const app = express();
 
     // Enable CORS headers in development/staging
     if (process.env.NODE_ENV !== 'production') app.use(require('cors')());
 
     // Enable automatic parsing of JSON bodies
-    app.use(require('body-parser').json());
+    app.use(express.json());
 
     // Disable express mention in headers
     app.disable('x-powered-by');
