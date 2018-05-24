@@ -12,8 +12,6 @@ module.exports = [
     upload.single('image'),
     async (req, res) => {
         try {
-            if (!req.file) throw new Error('No valid file was provided');
-
             const newProduct = await transaction(Product.knex(), async trx => {
                 let shops = [];
                 if (Array.isArray(req.body.shopCodes)) {
@@ -28,16 +26,23 @@ module.exports = [
                     barcodes = req.body.barcodes.map(code => ({code}));
                 }
 
-                let filename = '',
-                    extension = '';
-                if (typeof req.body.name === 'string') {
+                const currentProduct = await Product.query(trx).findById(req.params.id);
+
+                let oldFilename = currentProduct.filename.split('.');
+                let oldExtension = oldFilename.pop();
+                oldFilename = oldFilename.join('');
+
+                let filename = oldFilename;
+                let extension = oldExtension;
+                if (req.file && typeof req.body.name === 'string') {
                     filename = `${_.kebabCase(req.body.name.substring(0, 64))}-${uuid()}`;
                     extension = req.file.mimetype.split('/').pop();
                 }
 
-                const insertedProduct = await Product.query(trx)
+                const updatedProduct = await Product.query(trx)
                     .upsertGraph(
                         {
+                            id: Number(req.params.id),
                             name: req.body.name,
                             explanation: req.body.explanation,
                             classification: req.body.classification,
@@ -47,18 +52,30 @@ module.exports = [
                             categories,
                             barcodes,
                         },
-                        {relate: ['shops', 'categories'], insertMissing: ['barcodes']},
+                        {
+                            update: true, // Do an update instead of a patch
+                            relate: ['shops', 'categories'],
+                            unrelate: ['shops', 'categories'],
+                            insertMissing: ['barcodes'],
+                        },
                     )
                     .eager('[brand, shops, categories, barcodes]');
 
-                const data = await S3Image.uploadWithThumbs({
-                    path: `products`,
-                    filename,
-                    extension,
-                    body: req.file.buffer,
-                });
+                if (req.file) {
+                    const data = await S3Image.uploadWithThumbs({
+                        path: `products`,
+                        filename,
+                        extension,
+                        body: req.file.buffer,
+                    });
+                    await S3Image.removeAllSizes({
+                        path: `products`,
+                        filename: oldFilename,
+                        extension: oldExtension,
+                    });
+                }
 
-                return insertedProduct;
+                return updatedProduct;
             });
 
             res.send(newProduct);

@@ -30,4 +30,24 @@ const uploadWithThumbs = async ({path, filename, extension, body}) => {
     await upload({path, filename: `${filename}.small`, extension, body: small});
 };
 
-module.exports = {upload, uploadWithThumbs};
+const removeAllSizes = async ({path, filename, extension}) => {
+    var params = {
+        Bucket: process.env.AWS_BUCKET,
+        Delete: {
+            Objects: [
+                {Key: `${path}/${filename}.${extension}`},
+                {Key: `${path}/${filename}.large.${extension}`},
+                {Key: `${path}/${filename}.small.${extension}`},
+            ],
+            Quiet: true,
+        },
+    };
+    return new Promise((resolve, reject) => {
+        s3.deleteObjects(params, (err, data) => {
+            if (err) reject(err);
+            resolve(data);
+        });
+    });
+};
+
+module.exports = {upload, uploadWithThumbs, removeAllSizes};
