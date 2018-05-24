@@ -62,12 +62,14 @@ module.exports = [
                     .eager('[brand, shops, categories, barcodes]');
 
                 if (req.file) {
+                    // Upload new images
                     const data = await S3Image.uploadWithThumbs({
                         path: `products`,
                         filename,
                         extension,
                         body: req.file.buffer,
                     });
+                    // Remove old images
                     await S3Image.removeAllSizes({
                         path: `products`,
                         filename: oldFilename,
@@ -80,7 +82,7 @@ module.exports = [
 
             res.send(newProduct);
         } catch (e) {
-            console.error('❌  POST /product: ', e.message);
+            console.error('❌  PUT /product: ', e.message);
             res.status(500).send({error: 'Something went wrong'});
         }
     },
