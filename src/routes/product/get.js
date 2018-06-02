@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const crypto = require('crypto');
 
 const Product = require('../../models/product');
 const unaccent = require('../../utils/unaccent');

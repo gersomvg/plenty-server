@@ -3,13 +3,15 @@ const {transaction} = require('objection');
 const uuid = require('uuid/v4');
 const _ = require('lodash');
 
-const upload = require('../../utils/upload');
+const uploadMiddleware = require('../../utils/uploadMiddleware');
+const authMiddleware = require('../../utils/authMiddleware');
 
 const Product = require('../../models/product');
 const S3Image = require('../../utils/S3Image');
 
 module.exports = [
-    upload.single('image'),
+    authMiddleware('admin'),
+    uploadMiddleware.single('image'),
     async (req, res) => {
         try {
             const newProduct = await transaction(Product.knex(), async trx => {
@@ -27,6 +29,10 @@ module.exports = [
                 }
 
                 const currentProduct = await Product.query(trx).findById(req.params.id);
+
+                if (!currentProduct) {
+                    return res.status('404').send({error: 'No product found for this id'});
+                }
 
                 let oldFilename = currentProduct.filename.split('.');
                 let oldExtension = oldFilename.pop();

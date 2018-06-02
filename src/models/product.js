@@ -108,6 +108,10 @@ class ProductModel extends Model {
         delete obj.nameUnaccented;
         return obj;
     }
+
+    $beforeUpdate() {
+        this.updatedAt = new Date().toISOString();
+    }
 }
 
 module.exports = ProductModel;

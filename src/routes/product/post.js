@@ -3,13 +3,15 @@ const {transaction} = require('objection');
 const uuid = require('uuid/v4');
 const _ = require('lodash');
 
-const upload = require('../../utils/upload');
+const uploadMiddleware = require('../../utils/uploadMiddleware');
+const authMiddleware = require('../../utils/authMiddleware');
 
 const Product = require('../../models/product');
 const S3Image = require('../../utils/S3Image');
 
 module.exports = [
-    upload.single('image'),
+    authMiddleware('admin'),
+    uploadMiddleware.single('image'),
     async (req, res) => {
         try {
             if (!req.file) throw new Error('No valid file was provided');

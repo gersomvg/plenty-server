@@ -2,6 +2,8 @@ const express = require('express');
 
 const router = express.Router();
 
+router.post('/auth', require('./auth/post'));
+
 router.get('/product', require('./product/get'));
 router.get('/product/:id', require('./product/getOne'));
 router.get('/product/barcode/:barcode', require('./product/getOneByBarcode'));

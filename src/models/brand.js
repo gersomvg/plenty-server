@@ -29,6 +29,10 @@ class BrandModel extends Model {
             },
         };
     }
+
+    $beforeUpdate() {
+        this.updatedAt = new Date().toISOString();
+    }
 }
 
 module.exports = BrandModel;

@@ -33,6 +33,10 @@ class BarcodeModel extends Model {
             },
         };
     }
+
+    $beforeUpdate() {
+        this.updatedAt = new Date().toISOString();
+    }
 }
 
 module.exports = BarcodeModel;

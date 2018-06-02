@@ -1,7 +1,7 @@
 const useTimestamps = false;
 const defaultToNow = true;
 
-exports.up = async (knex, Promise) => {
+exports.up = async knex => {
     await knex.schema.createTable('brand', table => {
         table.increments();
         table.string('name').notNullable();
@@ -76,7 +76,7 @@ exports.up = async (knex, Promise) => {
     });
 };
 
-exports.down = async (knex, Promise) => {
+exports.down = async knex => {
     await knex.schema.dropTableIfExists('productCategory');
     await knex.schema.dropTableIfExists('category');
     await knex.schema.dropTableIfExists('barcode');
