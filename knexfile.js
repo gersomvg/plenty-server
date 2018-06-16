@@ -7,10 +7,10 @@ const common = {
     ssl: true,
     migrations: {
         tableName: 'knex_migrations',
-        directory: './src/migrations',
+        directory: `${__dirname}/src/migrations`,
     },
     seeds: {
-        directory: './src/seeds',
+        directory: `${__dirname}/src/seeds`,
     },
 
     // These mappers make sure all parts of the application work with camelCasing, making snake_case
