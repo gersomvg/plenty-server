@@ -1,4 +1,5 @@
 const jsonwebtoken = require('jsonwebtoken');
+const CONFIG = require('../config');
 
 const sign = payload => {
     if (
@@ -11,7 +12,7 @@ const sign = payload => {
         console.error('JWT signing requires: id, email, firstName, lastName, superAdmin');
     }
     return new Promise((resolve, reject) => {
-        const options = {expiresIn: `7d`};
+        const options = {expiresIn: CONFIG.JWT_EXPIRES_IN};
         jsonwebtoken.sign(payload, process.env.JWT_SECRET, options, (err, token) => {
             if (err) return reject(err);
             return resolve(token);
