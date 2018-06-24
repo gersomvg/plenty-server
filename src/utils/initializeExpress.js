@@ -15,6 +15,9 @@ const initializeExpress = () => {
     // Add versioning to API paths
     app.use('/api/v1', require('../routes'));
 
+    // Error handler middleware
+    app.use(require('./errorMiddleware'));
+
     // Start listening for requests
     app.listen(process.env.PORT, () => console.log(`App listening from ${process.env.PORT}`));
 };
