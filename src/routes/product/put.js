@@ -10,8 +10,8 @@ const Product = require('../../models/product');
 const S3Image = require('../../utils/S3Image');
 
 module.exports = [
-    authMiddleware('admin'),
     uploadMiddleware.single('image'),
+    authMiddleware('admin'),
     async (req, res) => {
         try {
             const newProduct = await transaction(Product.knex(), async trx => {
