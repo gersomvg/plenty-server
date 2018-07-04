@@ -1,7 +1,7 @@
 const Joi = require('joi');
-const crypto = require('crypto');
+const {Model} = require('objection');
 
-const Product = require('../../models/product');
+const Brand = require('../../models/brand');
 const escapeWhereLikeInput = require('../../utils/escapeWhereLikeInput');
 const getNextLink = require('../../utils/getNextLink');
 
@@ -9,10 +9,6 @@ module.exports = async (req, res) => {
     try {
         const querySchema = Joi.object().keys({
             name: Joi.string().allow(''),
-            categoryId: Joi.number().integer(),
-            shopCode: Joi.string()
-                .alphanum()
-                .max(32),
             limit: Joi.number()
                 .integer()
                 .min(1)
@@ -27,32 +23,24 @@ module.exports = async (req, res) => {
         const limit = Number(req.query.limit || 25);
         const offset = Number(req.query.offset || 0);
 
-        const query = Product.query();
+        const query = Brand.query();
         if (req.query.name) {
             const likeString = `%${escapeWhereLikeInput(req.query.name)}%`;
             query.whereRaw('unaccent(name) ILIKE unaccent(?)', [likeString]);
         }
-        if (req.query.shopCode) {
-            query.innerJoin('productShop', 'product.id', 'productShop.productId');
-            query.andWhere('productShop.shopCode', req.query.shopCode);
-        }
-        if (req.query.categoryId) {
-            query.innerJoin('productCategory', 'product.id', 'productCategory.productId');
-            query.andWhere('productCategory.categoryId', req.query.categoryId);
-        }
-        query.range(offset, limit + offset - 1).eager('[brand, shops, categories]');
-        const products = await query;
+        query.range(offset, limit + offset - 1);
+        const brands = await query;
 
         const nextLink = getNextLink({
             limit,
             offset,
-            total: products.total,
-            path: '/v1/product',
+            total: brands.total,
+            path: '/v1/brand',
             params: req.query,
         });
-        res.send({items: products.results, nextLink});
+        res.send({items: brands.results, nextLink});
     } catch (e) {
-        console.error('❌  GET /product: ', e.message);
+        console.error('❌  GET /brands: ', e.message);
         res.status(500).send({error: 'Something went wrong'});
     }
 };

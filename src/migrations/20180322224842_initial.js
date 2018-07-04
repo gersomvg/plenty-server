@@ -20,7 +20,6 @@ exports.up = async knex => {
     await knex.schema.createTable('product', table => {
         table.increments();
         table.string('name').notNullable();
-        table.string('nameUnaccented').notNullable();
         table.string('filename').notNullable();
         table.enu('classification', ['YES', 'MAYBE', 'NO']).notNullable();
         table.string('explanation', 1000);
@@ -74,9 +73,11 @@ exports.up = async knex => {
         table.primary(['productId', 'categoryId']);
         table.timestamps(useTimestamps, defaultToNow);
     });
+    await knex.raw('CREATE EXTENSION unaccent;');
 };
 
 exports.down = async knex => {
+    await knex.raw('DROP EXTENSION IF EXISTS unaccent;');
     await knex.schema.dropTableIfExists('productCategory');
     await knex.schema.dropTableIfExists('category');
     await knex.schema.dropTableIfExists('barcode');

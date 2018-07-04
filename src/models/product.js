@@ -1,5 +1,4 @@
 const {Model} = require('objection');
-const unaccent = require('../utils/unaccent');
 
 const getFileUrl = (filename, size) => {
     const parts = filename.split('.');
@@ -95,17 +94,10 @@ class ProductModel extends Model {
         };
     }
 
-    $formatDatabaseJson(obj) {
-        obj = super.$formatDatabaseJson(obj);
-        obj.name_unaccented = unaccent(obj.name);
-        return obj;
-    }
-
     $formatJson(obj) {
         obj = super.$formatJson(obj);
         if (obj.brand) delete obj.brandId;
         delete obj.filename;
-        delete obj.nameUnaccented;
         return obj;
     }
 

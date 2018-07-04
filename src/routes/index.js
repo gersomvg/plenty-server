@@ -14,4 +14,6 @@ router.get('/shop', require('./shop/get'));
 
 router.get('/category', require('./category/get'));
 
+router.get('/brand', require('./brand/get'));
+
 module.exports = router;
