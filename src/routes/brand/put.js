@@ -14,9 +14,12 @@ module.exports = [
     authMiddleware('admin'),
     async (req, res) => {
         try {
-            if (!validator(req.body)) return res.status(400).send({errors: validator.errors});
+            if (!validator(req.body)) return res.status(400).send({error: validator.errors});
+            const brandId = Number(req.params.id);
+            if (Number.isNaN(brandId))
+                return res.status(400).send({error: 'ID must be an integer'});
 
-            const updatedBrand = await Brand.query().updateAndFetchById(req.params.id, {
+            const updatedBrand = await Brand.query().updateAndFetchById(brandId, {
                 name: req.body.name,
             });
 

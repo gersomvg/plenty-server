@@ -14,7 +14,7 @@ module.exports = [
     authMiddleware('admin'),
     async (req, res) => {
         try {
-            if (!validator(req.body)) return res.status(400).send({errors: validator.errors});
+            if (!validator(req.body)) return res.status(400).send({error: validator.errors});
 
             const insertedBrand = await Brand.query().insert({name: req.body.name});
 
