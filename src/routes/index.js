@@ -15,5 +15,7 @@ router.get('/shop', require('./shop/get'));
 router.get('/category', require('./category/get'));
 
 router.get('/brand', require('./brand/get'));
+router.post('/brand', require('./brand/post'));
+router.put('/brand/:id', require('./brand/put'));
 
 module.exports = router;
