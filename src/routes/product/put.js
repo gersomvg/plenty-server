@@ -25,7 +25,7 @@ module.exports = [
                 }
                 let barcodes = [];
                 if (Array.isArray(req.body.barcodes)) {
-                    barcodes = req.body.barcodes.map(code => ({code}));
+                    barcodes = req.body.barcodes.map(code => ({code: code.trim()}));
                 }
 
                 const currentProduct = await Product.query(trx).findById(req.params.id);
