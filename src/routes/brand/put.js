@@ -5,7 +5,7 @@ const Brand = require('../../models/brand');
 
 const validator = new Ajv({allErrors: true}).compile({
     type: 'object',
-    properties: {name: {type: 'string', minLength: 1, maxLength: 255}},
+    properties: {name: {type: 'string', pattern: '\\S+', minLength: 1, maxLength: 255}},
     required: ['name'],
     additionalProperties: false,
 });
@@ -20,7 +20,7 @@ module.exports = [
                 return res.status(400).send({error: 'ID must be an integer'});
 
             const updatedBrand = await Brand.query().updateAndFetchById(brandId, {
-                name: req.body.name,
+                name: req.body.name.trim(),
             });
 
             if (!updatedBrand) {

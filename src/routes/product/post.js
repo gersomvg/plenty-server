@@ -40,8 +40,8 @@ module.exports = [
                 const insertedProduct = await Product.query(trx)
                     .upsertGraph(
                         {
-                            name: req.body.name,
-                            explanation: req.body.explanation,
+                            name: req.body.name.trim(),
+                            explanation: req.body.explanation.trim(),
                             classification: req.body.classification,
                             brandId: Number(req.body.brandId),
                             filename: `${filename}.${extension}`,

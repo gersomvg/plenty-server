@@ -5,7 +5,7 @@ const Brand = require('../../models/brand');
 
 const validator = new Ajv({allErrors: true}).compile({
     type: 'object',
-    properties: {name: {type: 'string', minLength: 1, maxLength: 255}},
+    properties: {name: {type: 'string', pattern: '\\S+', minLength: 1, maxLength: 255}},
     required: ['name'],
     additionalProperties: false,
 });
@@ -16,7 +16,7 @@ module.exports = [
         try {
             if (!validator(req.body)) return res.status(400).send({error: validator.errors});
 
-            const insertedBrand = await Brand.query().insert({name: req.body.name});
+            const insertedBrand = await Brand.query().insert({name: req.body.name.trim()});
 
             res.send(insertedBrand);
         } catch (e) {

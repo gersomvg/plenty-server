@@ -6,8 +6,8 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start:dev": "nodemon index.js",
-    "start": "node index.js",
+    "start": "nodemon index.js",
+    "start:production": "node index.js",
     "seed": "node src/seeds/index.js",
     "db:reset": "knex migrate:rollback && knex migrate:latest && knex seed:run",
     "precommit": "lint-staged"
