@@ -4,7 +4,7 @@ const Category = require('../../models/category');
 
 module.exports = async (req, res) => {
     try {
-        const categories = await Category.query();
+        const categories = await Category.query().orderBy('name', 'asc');
 
         res.send({items: categories});
     } catch (e) {
