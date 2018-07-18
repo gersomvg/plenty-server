@@ -97,6 +97,9 @@ class ProductModel extends Model {
     $formatJson(obj) {
         obj = super.$formatJson(obj);
         if (obj.brand) delete obj.brandId;
+        if (obj.barcodes) {
+            obj.barcodes = obj.barcodes.map(bcObj => bcObj.code);
+        }
         delete obj.filename;
         return obj;
     }
