@@ -40,7 +40,11 @@ module.exports = async (req, res) => {
             query.innerJoin('productCategory', 'product.id', 'productCategory.productId');
             query.andWhere('productCategory.categoryId', req.query.categoryId);
         }
-        query.range(offset, limit + offset - 1).eager('[brand, shops, categories, barcodes]');
+        query
+            .range(offset, limit + offset - 1)
+            .eager('[brand, shops, categories, barcodes]')
+            .orderBy('createdAt', 'desc')
+            .orderBy('updatedAt', 'desc');
         const products = await query;
 
         const nextLink = getNextLink({
