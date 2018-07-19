@@ -1,28 +1,24 @@
-const Joi = require('joi');
-const crypto = require('crypto');
+const Ajv = require('ajv');
 
 const Product = require('../../models/product');
 const escapeWhereLikeInput = require('../../utils/escapeWhereLikeInput');
 const getNextLink = require('../../utils/getNextLink');
 
+const validator = new Ajv({allErrors: true}).compile({
+    type: 'object',
+    properties: {
+        name: {type: 'string', maxLength: 255},
+        categoryId: {type: 'string', pattern: '^\\d*$'},
+        shopCode: {type: 'string', pattern: '^[a-z]*$'},
+        limit: {type: 'string', pattern: '^\\d{1,2}$'},
+        offset: {type: 'string', pattern: '^\\d+$'},
+    },
+    additionalProperties: false,
+});
+
 module.exports = async (req, res) => {
     try {
-        const querySchema = Joi.object().keys({
-            name: Joi.string().allow(''),
-            categoryId: Joi.number().integer(),
-            shopCode: Joi.string()
-                .alphanum()
-                .max(32),
-            limit: Joi.number()
-                .integer()
-                .min(1)
-                .max(100),
-            offset: Joi.number().integer(),
-        });
-        const validation = Joi.validate(req.query, querySchema);
-        if (validation.error) {
-            return res.status(400).send({error: 'Invalid query parameters provided'});
-        }
+        if (!validator(req.query)) return res.status(400).send({error: validator.errors});
 
         const limit = Number(req.query.limit || 25);
         const offset = Number(req.query.offset || 0);
