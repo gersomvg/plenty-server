@@ -12,6 +12,7 @@ const validator = new Ajv({allErrors: true}).compile({
         shopCode: {type: 'string', pattern: '^[a-z]*$'},
         limit: {type: 'string', pattern: '^\\d{1,2}$'},
         offset: {type: 'string', pattern: '^\\d+$'},
+        classifications: {type: 'string', pattern: '^((YES|MAYBE|NO)(,(YES|MAYBE|NO))*)?$'},
     },
     additionalProperties: false,
 });
@@ -28,13 +29,17 @@ module.exports = async (req, res) => {
             const likeString = `%${escapeWhereLikeInput(req.query.name)}%`;
             query.whereRaw('unaccent(name) ILIKE unaccent(?)', [likeString]);
         }
+        if (req.query.classifications) {
+            const classifications = req.query.classifications.split(',');
+            query.whereIn('classification', classifications);
+        }
         if (req.query.shopCode) {
             query.innerJoin('productShop', 'product.id', 'productShop.productId');
-            query.andWhere('productShop.shopCode', req.query.shopCode);
+            query.where('productShop.shopCode', req.query.shopCode);
         }
         if (req.query.categoryId) {
             query.innerJoin('productCategory', 'product.id', 'productCategory.productId');
-            query.andWhere('productCategory.categoryId', req.query.categoryId);
+            query.where('productCategory.categoryId', req.query.categoryId);
         }
         query
             .range(offset, limit + offset - 1)
