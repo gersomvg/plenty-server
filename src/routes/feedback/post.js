@@ -32,7 +32,9 @@ module.exports = async (req, res) => {
         if (req.body.productId) insertData.productId = Number(req.body.productId);
         else insertData.barcode = req.body.barcode;
 
-        const insertedFeedback = await Feedback.query().insert(insertData);
+        const insertedFeedback = await Feedback.query()
+            .insert(insertData)
+            .eager('[product, product.[brand, shops, categories, barcodes]]');
 
         res.send(insertedFeedback);
     } catch (e) {

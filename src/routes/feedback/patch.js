@@ -19,9 +19,11 @@ module.exports = [
             if (Number.isNaN(feedbackId))
                 return res.status(400).send({error: 'ID must be an integer'});
 
-            const updatedFeedback = await Feedback.query().patchAndFetchById(feedbackId, {
-                archived: req.body.archived === 'true',
-            });
+            const updatedFeedback = await Feedback.query()
+                .patchAndFetchById(feedbackId, {
+                    archived: req.body.archived === 'true',
+                })
+                .eager('[product, product.[brand, shops, categories, barcodes]]');
 
             if (!updatedFeedback) {
                 return res.status(404).send({error: 'No feedback found for this id'});

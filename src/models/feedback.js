@@ -34,6 +34,12 @@ class FeedbackModel extends Model {
     $beforeUpdate() {
         this.updatedAt = new Date().toISOString();
     }
+
+    $formatJson(obj) {
+        obj = super.$formatJson(obj);
+        if (typeof obj.product !== 'undefined') delete obj.productId;
+        return obj;
+    }
 }
 
 module.exports = FeedbackModel;
