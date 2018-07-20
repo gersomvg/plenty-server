@@ -2,17 +2,17 @@ const Ajv = require('ajv');
 const {Model} = require('objection');
 
 const authMiddleware = require('../../utils/authMiddleware');
-const Brand = require('../../models/brand');
-const escapeWhereLikeInput = require('../../utils/escapeWhereLikeInput');
+const Feedback = require('../../models/feedback');
 const getNextLink = require('../../utils/getNextLink');
 
 const validator = new Ajv({allErrors: true}).compile({
     type: 'object',
     properties: {
-        name: {type: 'string', maxLength: 255},
+        archived: {type: 'string', pattern: '^(true|false)$'},
         limit: {type: 'string', pattern: '^\\d{1,2}$'},
         offset: {type: 'string', pattern: '^\\d+$'},
     },
+    required: ['archived'],
     additionalProperties: false,
 });
 
@@ -25,24 +25,20 @@ module.exports = [
             const limit = Number(req.query.limit || 25);
             const offset = Number(req.query.offset || 0);
 
-            const query = Brand.query();
-            if (req.query.name) {
-                const likeString = `%${escapeWhereLikeInput(req.query.name)}%`;
-                query.whereRaw('unaccent(name) ILIKE unaccent(?)', [likeString]);
-            }
-            query.range(offset, limit + offset - 1);
-            const brands = await query;
+            const feedbacks = await Feedback.query()
+                .where({archived: req.query.archived === 'true'})
+                .range(offset, limit + offset - 1);
 
             const nextLink = getNextLink({
                 limit,
                 offset,
-                total: brands.total,
-                path: '/v1/brand',
+                total: feedbacks.total,
+                path: '/v1/feedback',
                 params: req.query,
             });
-            res.send({items: brands.results, nextLink});
+            res.send({items: feedbacks.results, nextLink});
         } catch (e) {
-            console.error('❌  GET /brand: ', e.message);
+            console.error('❌  GET /feedback: ', e.message);
             res.status(500).send({error: 'Something went wrong'});
         }
     },

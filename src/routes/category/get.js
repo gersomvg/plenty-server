@@ -1,5 +1,3 @@
-const Joi = require('joi');
-
 const Category = require('../../models/category');
 
 module.exports = async (req, res) => {

@@ -18,4 +18,8 @@ router.get('/brand', require('./brand/get'));
 router.post('/brand', require('./brand/post'));
 router.put('/brand/:id', require('./brand/put'));
 
+router.get('/feedback', require('./feedback/get'));
+router.post('/feedback', require('./feedback/post'));
+router.patch('/feedback/:id', require('./feedback/patch'));
+
 module.exports = router;

@@ -1,4 +1,3 @@
-const Joi = require('joi');
 const {transaction} = require('objection');
 const uuid = require('uuid/v4');
 const _ = require('lodash');
