@@ -21,6 +21,13 @@ const validator = new Ajv({allErrors: true}).compile({
             required: ['message', 'productId'],
             additionalProperties: false,
         },
+        {
+            properties: {
+                message: {type: 'string', pattern: '\\S+', maxLength: 1000},
+            },
+            required: ['message'],
+            additionalProperties: false,
+        },
     ],
 });
 
@@ -30,7 +37,7 @@ module.exports = async (req, res) => {
 
         let insertData = {message: req.body.message.trim()};
         if (req.body.productId) insertData.productId = Number(req.body.productId);
-        else insertData.barcode = req.body.barcode;
+        else if (req.body.barcode) insertData.barcode = req.body.barcode;
 
         const insertedFeedback = await Feedback.query()
             .insert(insertData)
