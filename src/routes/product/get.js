@@ -27,7 +27,10 @@ module.exports = async (req, res) => {
         const query = Product.query();
         if (req.query.name) {
             const likeString = `%${escapeWhereLikeInput(req.query.name)}%`;
-            query.whereRaw('unaccent(name) ILIKE unaccent(?)', [likeString]);
+            query.join('brand', 'product.brandId', 'brand.id');
+            query.whereRaw("unaccent(brand.name || ' ' || product.name) ILIKE unaccent(?)", [
+                likeString,
+            ]);
         }
         if (req.query.classifications) {
             const classifications = req.query.classifications.split(',');
