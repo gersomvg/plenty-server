@@ -5,7 +5,7 @@ const Feedback = require('../../models/feedback');
 
 const validator = new Ajv({allErrors: true}).compile({
     type: 'object',
-    properties: {archived: {type: 'string', pattern: '^(true|false)$'}},
+    properties: {archived: {type: 'boolean'}},
     required: ['archived'],
     additionalProperties: false,
 });
