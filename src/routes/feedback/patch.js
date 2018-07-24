@@ -21,7 +21,7 @@ module.exports = [
 
             const updatedFeedback = await Feedback.query()
                 .patchAndFetchById(feedbackId, {
-                    archived: req.body.archived === 'true',
+                    archived: req.body.archived,
                 })
                 .eager('[product, product.[brand, shops, categories, barcodes]]');
 
