@@ -27,6 +27,7 @@ module.exports = [
 
             const feedbacks = await Feedback.query()
                 .where({archived: req.query.archived === 'true'})
+                .orderBy('createdAt', 'desc')
                 .eager('[product, product.[brand, shops, categories, barcodes]]')
                 .range(offset, limit + offset - 1);
 
