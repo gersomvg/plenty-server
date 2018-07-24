@@ -16,7 +16,7 @@ const validator = new Ajv({allErrors: true}).compile({
         {
             properties: {
                 message: {type: 'string', pattern: '\\S+', maxLength: 1000},
-                productId: {type: 'string', pattern: '\\S+'},
+                productId: {type: 'integer'},
             },
             required: ['message', 'productId'],
             additionalProperties: false,
