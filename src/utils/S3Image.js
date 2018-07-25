@@ -20,9 +20,11 @@ const upload = async ({path, filename, extension, body}) => {
 
 const uploadWithThumbs = async ({path, filename, extension, body}) => {
     const large = await sharp(body)
+        .rotate()
         .resize(900, 900)
         .toBuffer();
     const small = await sharp(body)
+        .rotate()
         .resize(180, 180)
         .toBuffer();
     await upload({path, filename, extension, body});
