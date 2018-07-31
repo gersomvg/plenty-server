@@ -85,6 +85,8 @@ module.exports = [
                 return updatedProduct;
             });
 
+            await Product.knex().raw('REFRESH MATERIALIZED VIEW search_index');
+
             res.send(newProduct);
         } catch (e) {
             console.error('❌  PUT /product: ', e.message);

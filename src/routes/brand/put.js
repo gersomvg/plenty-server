@@ -22,6 +22,7 @@ module.exports = [
             const updatedBrand = await Brand.query().updateAndFetchById(brandId, {
                 name: req.body.name.trim(),
             });
+            await Brand.knex().raw('REFRESH MATERIALIZED VIEW search_index');
 
             if (!updatedBrand) {
                 return res.status(404).send({error: 'No brand found for this id'});

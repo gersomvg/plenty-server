@@ -17,6 +17,7 @@ module.exports = [
             if (!validator(req.body)) return res.status(400).send({error: validator.errors});
 
             const insertedBrand = await Brand.query().insert({name: req.body.name.trim()});
+            await Brand.knex().raw('REFRESH MATERIALIZED VIEW search_index');
 
             res.send(insertedBrand);
         } catch (e) {

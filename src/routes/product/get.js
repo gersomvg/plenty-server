@@ -1,6 +1,7 @@
 const Ajv = require('ajv');
+const {raw} = require('objection');
 
-const Product = require('../../models/product');
+const SearchIndex = require('../../models/searchIndex');
 const escapeWhereLikeInput = require('../../utils/escapeWhereLikeInput');
 const getNextLink = require('../../utils/getNextLink');
 
@@ -24,17 +25,44 @@ module.exports = async (req, res) => {
         const limit = Number(req.query.limit || 25);
         const offset = Number(req.query.offset || 0);
 
-        const query = Product.query();
+        const query = SearchIndex.query();
         if (req.query.name) {
-            const likeString = `%${escapeWhereLikeInput(req.query.name)}%`;
-            query.join('brand', 'product.brandId', 'brand.id');
-            query.whereRaw("unaccent(brand.name || ' ' || product.name) ILIKE unaccent(?)", [
-                likeString,
-            ]);
+            const words = req.query.name
+                .split(' ')
+                .map(word => word.replace(/([!&|:*])/g, ''))
+                .filter(word => word !== '');
+            const ranks = words.map(
+                word => `
+                GREATEST(
+                    ts_rank(document, to_tsquery('simple', unaccent(?))),
+                    ts_rank(reverse_document, to_tsquery('simple', reverse(unaccent(?))))
+                )
+            `,
+            );
+            const wheres = words.map(
+                word =>
+                    "document @@ to_tsquery('simple', ?) OR reverse_document @@ to_tsquery('simple', reverse(?))",
+            );
+            const bindings = [];
+            words.forEach(word => {
+                bindings.push(`${word}:*`);
+                bindings.push(`*:${word}`);
+            });
+            query
+                .select(raw(`(${ranks.join(' + ')}) as rank`, bindings))
+                .whereRaw(`(${wheres.join(' OR ')})`, bindings)
+                .orderBy('rank', 'desc')
+                .debug();
         }
+
+        query
+            .from('searchIndex')
+            .rightJoin('product', 'searchIndex.productId', 'product.id')
+            .debug();
+
         if (req.query.classifications) {
             const classifications = req.query.classifications.split(',');
-            query.whereIn('classification', classifications);
+            query.whereIn('product.classification', classifications);
         }
         if (req.query.shopCode) {
             query.innerJoin('productShop', 'product.id', 'productShop.productId');
@@ -46,9 +74,9 @@ module.exports = async (req, res) => {
         }
         query
             .range(offset, limit + offset - 1)
-            .eager('[brand, shops, categories, barcodes]')
-            .orderBy('createdAt', 'desc')
-            .orderBy('updatedAt', 'desc');
+            .eager('[product, product.[brand, shops, categories, barcodes]]')
+            .orderBy('product.createdAt', 'desc')
+            .orderBy('product.updatedAt', 'desc');
         const products = await query;
 
         const nextLink = getNextLink({
@@ -58,7 +86,7 @@ module.exports = async (req, res) => {
             path: '/v1/product',
             params: req.query,
         });
-        res.send({items: products.results, nextLink});
+        res.send({items: products.results.map(result => result.product), nextLink});
     } catch (e) {
         console.error('❌  GET /product: ', e.message);
         res.status(500).send({error: 'Something went wrong'});

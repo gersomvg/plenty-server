@@ -62,6 +62,8 @@ module.exports = [
                 return insertedProduct;
             });
 
+            await Product.knex().raw('REFRESH MATERIALIZED VIEW search_index');
+
             res.send(newProduct);
         } catch (e) {
             console.error('❌  POST /product: ', e.message);
