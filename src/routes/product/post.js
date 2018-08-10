@@ -24,6 +24,10 @@ module.exports = [
                 if (Array.isArray(req.body.categoryIds)) {
                     categories = req.body.categoryIds.map(id => ({id}));
                 }
+                let tags = [];
+                if (Array.isArray(req.body.tagIds)) {
+                    tags = req.body.tagIds.map(id => ({id}));
+                }
                 let barcodes = [];
                 if (Array.isArray(req.body.barcodes)) {
                     barcodes = req.body.barcodes.map(code => ({code: code.trim()}));
@@ -46,11 +50,12 @@ module.exports = [
                             filename: `${filename}.${extension}`,
                             shops,
                             categories,
+                            tags,
                             barcodes,
                         },
-                        {relate: ['shops', 'categories'], insertMissing: ['barcodes']},
+                        {relate: ['shops', 'categories', 'tags'], insertMissing: ['barcodes']},
                     )
-                    .eager('[brand, shops, categories, barcodes]');
+                    .eager('[brand, shops, categories, tags, barcodes]');
 
                 const data = await S3Image.uploadWithThumbs({
                     path: `products`,

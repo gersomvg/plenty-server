@@ -22,6 +22,10 @@ module.exports = [
                 if (Array.isArray(req.body.categoryIds)) {
                     categories = req.body.categoryIds.map(id => ({id}));
                 }
+                let tags = [];
+                if (Array.isArray(req.body.tagIds)) {
+                    tags = req.body.tagIds.map(id => ({id}));
+                }
                 let barcodes = [];
                 if (Array.isArray(req.body.barcodes)) {
                     barcodes = req.body.barcodes.map(code => ({code: code.trim()}));
@@ -55,16 +59,17 @@ module.exports = [
                             filename: `${filename}.${extension}`,
                             shops,
                             categories,
+                            tags,
                             barcodes,
                         },
                         {
                             update: true, // Do an update instead of a patch
-                            relate: ['shops', 'categories'],
-                            unrelate: ['shops', 'categories'],
+                            relate: ['shops', 'categories', 'tags'],
+                            unrelate: ['shops', 'categories', 'tags'],
                             insertMissing: ['barcodes'],
                         },
                     )
-                    .eager('[brand, shops, categories, barcodes]');
+                    .eager('[brand, shops, categories, tags, barcodes]');
 
                 if (req.file) {
                     // Upload new images

@@ -11,12 +11,6 @@ exports.up = async knex => {
         table.string('code').primary();
         table.string('name').notNullable();
     });
-    await knex('shop').insert([
-        {code: 'ah', name: 'Albert Heijn'},
-        {code: 'jumbo', name: 'Jumbo'},
-        {code: 'lidl', name: 'Lidl'},
-        {code: 'aldi', name: 'Aldi'},
-    ]);
     await knex.schema.createTable('product', table => {
         table.increments();
         table.string('name').notNullable();
@@ -53,14 +47,6 @@ exports.up = async knex => {
         table.increments();
         table.string('name').notNullable();
     });
-    await knex('category').insert([
-        {id: 1, name: 'Broodbeleg'},
-        {id: 2, name: 'Zoete tussendoortjes'},
-        {id: 3, name: 'Hartige tussendoortjes'},
-        {id: 4, name: 'Vleesvervangers'},
-        {id: 5, name: 'Zuivelvervangers'},
-    ]);
-    await knex.raw('ALTER SEQUENCE category_id_seq RESTART WITH 6');
     await knex.schema.createTable('productCategory', table => {
         table
             .integer('productId')

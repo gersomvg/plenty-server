@@ -29,6 +29,7 @@ class ProductModel extends Model {
         const Barcode = require('./barcode');
         const Shop = require('./shop');
         const Category = require('./category');
+        const Tag = require('./tag');
         return {
             brand: {
                 relation: Model.BelongsToOneRelation,
@@ -67,6 +68,18 @@ class ProductModel extends Model {
                     through: {
                         from: 'productCategory.productId',
                         to: 'productCategory.categoryId',
+                    },
+                },
+            },
+            tags: {
+                relation: Model.ManyToManyRelation,
+                modelClass: Tag,
+                join: {
+                    from: 'product.id',
+                    to: 'tag.id',
+                    through: {
+                        from: 'productTag.productId',
+                        to: 'productTag.tagId',
                     },
                 },
             },

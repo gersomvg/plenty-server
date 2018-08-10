@@ -41,7 +41,7 @@ module.exports = async (req, res) => {
 
         const insertedFeedback = await Feedback.query()
             .insert(insertData)
-            .eager('[product, product.[brand, shops, categories, barcodes]]');
+            .eager('[product, product.[brand, shops, categories, tags, barcodes]]');
 
         res.send(insertedFeedback);
     } catch (e) {

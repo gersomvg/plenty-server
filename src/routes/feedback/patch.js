@@ -23,7 +23,7 @@ module.exports = [
                 .patchAndFetchById(feedbackId, {
                     archived: req.body.archived,
                 })
-                .eager('[product, product.[brand, shops, categories, barcodes]]');
+                .eager('[product, product.[brand, shops, categories, tags, barcodes]]');
 
             if (!updatedFeedback) {
                 return res.status(404).send({error: 'No feedback found for this id'});

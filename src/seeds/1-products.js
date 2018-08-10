@@ -4,18 +4,38 @@ exports.seed = async (knex, Promise) => {
     await knex('product_shop').del();
     await knex('product').del();
     await knex('brand').del();
+    await knex('shop').del();
 
-    // Add new rows
+    await knex.raw('ALTER SEQUENCE product_id_seq RESTART WITH 1');
+    await knex.raw('ALTER SEQUENCE brand_id_seq RESTART WITH 1');
+    await knex.raw('ALTER SEQUENCE category_id_seq RESTART WITH 1');
+
     await knex('brand').insert([
-        {id: 1, name: 'Vegetarische Slager'},
-        {id: 2, name: 'Jumbo'},
-        {id: 3, name: 'Albert Heijn'},
-        {id: 4, name: 'CêlaVita'},
+        {name: 'Vegetarische Slager'},
+        {name: 'Jumbo'},
+        {name: 'Albert Heijn'},
+        {name: 'CêlaVita'},
     ]);
     await knex.raw('ALTER SEQUENCE brand_id_seq RESTART WITH 5');
+
+    await knex('shop').insert([
+        {code: 'ah', name: 'Albert Heijn'},
+        {code: 'jumbo', name: 'Jumbo'},
+        {code: 'lidl', name: 'Lidl'},
+        {code: 'aldi', name: 'Aldi'},
+    ]);
+
+    await knex('category').insert([
+        {name: 'Broodbeleg'},
+        {name: 'Zoete tussendoortjes'},
+        {name: 'Hartige tussendoortjes'},
+        {name: 'Vleesvervangers'},
+        {name: 'Zuivelvervangers'},
+    ]);
+    await knex.raw('ALTER SEQUENCE category_id_seq RESTART WITH 6');
+
     await knex('product').insert([
         {
-            id: 1,
             name: 'Petit Paté',
             brandId: 1,
             filename: 'petit-pate.jpg',
@@ -23,7 +43,6 @@ exports.seed = async (knex, Promise) => {
             explanation: 'Expliciet vermeld op de verpakking',
         },
         {
-            id: 2,
             name: "Petit Filet à l'Americain",
             brandId: 1,
             filename: 'petit-file.jpg',
@@ -31,7 +50,6 @@ exports.seed = async (knex, Promise) => {
             explanation: 'Expliciet vermeld op de verpakking',
         },
         {
-            id: 3,
             name: 'Boterhamworst',
             brandId: 1,
             filename: 'boterhamworst.jpg',
@@ -39,7 +57,6 @@ exports.seed = async (knex, Promise) => {
             explanation: 'Expliciet vermeld op de verpakking',
         },
         {
-            id: 4,
             name: 'Kipworst',
             brandId: 1,
             filename: 'kipworst.jpg',
@@ -47,7 +64,6 @@ exports.seed = async (knex, Promise) => {
             explanation: 'Bevat kippenei',
         },
         {
-            id: 5,
             name: 'Italiaanse Worst',
             brandId: 1,
             filename: 'italiaanse-worst.jpg',
@@ -55,7 +71,6 @@ exports.seed = async (knex, Promise) => {
             explanation: 'Bevat kippenei',
         },
         {
-            id: 6,
             name: 'Boterhamworst Provençaal',
             brandId: 1,
             filename: 'boterhamworst-provencaal.jpg',
@@ -63,7 +78,6 @@ exports.seed = async (knex, Promise) => {
             explanation: 'Expliciet vermeld op de verpakking',
         },
         {
-            id: 7,
             name: 'Gelderse Worst',
             brandId: 1,
             filename: 'gelderse-worst.jpg',
@@ -71,7 +85,6 @@ exports.seed = async (knex, Promise) => {
             explanation: 'Bevat kippenei',
         },
         {
-            id: 8,
             name: 'Oranjekoek Stukjes',
             brandId: 2,
             filename: 'oranjekoek-stukjes.jpg',
@@ -79,21 +92,27 @@ exports.seed = async (knex, Promise) => {
             explanation: 'Bevat vitamine D3, dat meestal uit schapenwol wordt gewonnen',
         },
         {
-            id: 9,
             name: 'Creamy Kokos Naturel',
             brandId: 3,
             filename: 'creamy-kokos-naturel.jpg',
             classification: 'YES',
         },
         {
-            id: 10,
             name: 'Country Partjes Rozemarijn Zeezout',
             brandId: 4,
             filename: 'country-partjes.jpg',
             classification: 'MAYBE',
         },
+        {
+            name: 'Tor­til­la wraps meer­gra­nen',
+            brandId: 3,
+            filename: 'wraps.jpg',
+            classification: 'YES',
+        },
     ]);
-    await knex.raw('ALTER SEQUENCE product_id_seq RESTART WITH 11');
+    await knex.raw('ALTER SEQUENCE product_id_seq RESTART WITH 12');
+    await knex.raw('REFRESH MATERIALIZED VIEW search_index');
+
     await knex('product_shop').insert([
         {productId: 1, shopCode: 'ah'},
         {productId: 1, shopCode: 'jumbo'},
@@ -113,7 +132,9 @@ exports.seed = async (knex, Promise) => {
         {productId: 9, shopCode: 'ah'},
         {productId: 10, shopCode: 'ah'},
         {productId: 10, shopCode: 'jumbo'},
+        {productId: 11, shopCode: 'ah'},
     ]);
+
     await knex('product_category').insert([
         {productId: 1, categoryId: 1},
         {productId: 2, categoryId: 1},
@@ -125,6 +146,7 @@ exports.seed = async (knex, Promise) => {
         {productId: 8, categoryId: 2},
         {productId: 9, categoryId: 5},
     ]);
+
     await knex('barcode').insert([
         {code: '0123456789999', productId: 1},
         {code: '1123456789998', productId: 8},
