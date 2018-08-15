@@ -5,7 +5,11 @@ module.exports = async (req, res) => {
         const tags = await Tag.query()
             .innerJoin('tagTree', 'tag.id', 'tagTree.tagId')
             .where('tagTree.parentId', null)
-            .eager('children.^')
+            .eager('children(orderBySequence).^', {
+                orderBySequence: builder => {
+                    builder.orderBy('sequence');
+                },
+            })
             .orderBy('tagTree.sequence');
 
         res.send({items: tags});
