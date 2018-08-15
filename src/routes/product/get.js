@@ -16,6 +16,8 @@ const validator = new Ajv({allErrors: true}).compile({
         categoryId: {type: 'string', pattern: '^\\d*$'},
         tagId: {type: 'string', pattern: '^\\d*$'},
         shopCode: {type: 'string', pattern: '^[a-z]*$'},
+        withoutTag: {type: 'string', pattern: '^(true|false)?$'},
+        withoutBarcode: {type: 'string', pattern: '^(true|false)?$'},
         limit: {type: 'string', pattern: '^\\d{1,2}$'},
         offset: {type: 'string', pattern: '^\\d+$'},
         classifications: {type: 'string', pattern: '^((YES|MAYBE|NO)(,(YES|MAYBE|NO))*)?$'},
@@ -114,7 +116,6 @@ module.exports = async (req, res) => {
         if (req.query.tagId) {
             query.whereExists(
                 knex('productTag')
-                    .debug()
                     .whereRaw('product_id = product.id')
                     .whereIn(
                         'tagId',
@@ -134,6 +135,12 @@ module.exports = async (req, res) => {
                         ),
                     ),
             );
+        }
+        if (req.query.withoutTag === 'true') {
+            query.whereNotExists(knex('productTag').whereRaw('product_id = product.id'));
+        }
+        if (req.query.withoutBarcode === 'true') {
+            query.whereNotExists(knex('barcode').whereRaw('product_id = product.id'));
         }
 
         query.orderBy('product.createdAt', 'desc').orderBy('product.updatedAt', 'desc');
