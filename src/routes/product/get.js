@@ -1,13 +1,25 @@
+/**
+ * This endpoint is implemented differently than the other endpoints. It was really hard to use
+ * objection to achieve the complex combination of search, joins and pagination needed here.
+ * Therefore I fell back to writing raw queries (using knex) and afterwards mapping the results
+ * to objection models.
+ */
+
 const Ajv = require('ajv');
 const Knex = require('knex');
 
-const SearchIndex = require('../../models/searchIndex');
+const Product = require('../../models/product');
+const Brand = require('../../models/brand');
+const Shop = require('../../models/shop');
+const Category = require('../../models/category');
+const Tag = require('../../models/tag');
+const Barcode = require('../../models/barcode');
 const escapeWhereLikeInput = require('../../utils/escapeWhereLikeInput');
 const getNextLink = require('../../utils/getNextLink');
 const getFileUrl = require('../../utils/getFileUrl');
 const knexConfig = require('../../../knexfile');
 
-const knex = Knex(knexConfig[process.env.NODE_ENV]);
+const knex = Product.knex();
 
 const validator = new Ajv({allErrors: true}).compile({
     type: 'object',
@@ -47,7 +59,7 @@ module.exports = async (req, res) => {
                     "case when count(tag) = 0 then '[]' else jsonb_agg(distinct tag) end as tags",
                 ),
                 knex.raw(
-                    "case when count(barcode) = 0 then '[]' else jsonb_agg(distinct barcode.code) end as barcodes",
+                    "case when count(barcode) = 0 then '[]' else jsonb_agg(distinct barcode) end as barcodes",
                 ),
             )
             .rightJoin('product', 'searchIndex.productId', 'product.id')
@@ -155,27 +167,18 @@ module.exports = async (req, res) => {
             params: req.query,
         });
 
-        products.forEach(product => {
-            delete product.brandId;
-            delete product.rank;
-            delete product.fullCount;
-            product.brand = product.brand[0];
-            product.imageUrl = getFileUrl({
-                filename: product.filename,
-                size: 'large',
-                type: 'product',
-            });
-            product.thumbUrl = getFileUrl({
-                filename: product.filename,
-                size: 'small',
-                type: 'product',
-            });
-            product.shops.forEach(shop => {
-                shop.imageUrl = getFileUrl({filename: `${shop.code}.png`, type: 'shop'});
+        const mappedProducts = products.map(product => {
+            const {fullCount, rank, brand, shops, categories, tags, barcodes, ...attrs} = product;
+            return Product.fromDatabaseJson(attrs).$set({
+                brand: Brand.fromDatabaseJson(brand[0]),
+                shops: shops.map(shop => Shop.fromDatabaseJson(shop)),
+                categories: categories.map(category => Category.fromDatabaseJson(category)),
+                tags: tags.map(tag => Tag.fromDatabaseJson(tag)),
+                barcodes: barcodes.map(barcode => Barcode.fromDatabaseJson(barcode)),
             });
         });
 
-        res.send({items: products, nextLink});
+        res.send({items: mappedProducts, nextLink});
     } catch (e) {
         console.error('❌  GET /product: ', e.message);
         res.status(500).send({error: 'Something went wrong'});

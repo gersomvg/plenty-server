@@ -1,6 +1,7 @@
 const {transaction} = require('objection');
 const uuid = require('uuid/v4');
 const _ = require('lodash');
+const fetch = require('node-fetch');
 
 const uploadMiddleware = require('../../utils/uploadMiddleware');
 const authMiddleware = require('../../utils/authMiddleware');
@@ -13,7 +14,17 @@ module.exports = [
     authMiddleware('admin'),
     async (req, res) => {
         try {
-            if (!req.file) throw new Error('No valid file was provided');
+            if (!req.file && !req.body.shopImageUrl) throw new Error('No valid image was provided');
+
+            if (
+                req.body.shopImageUrl &&
+                !(
+                    req.body.shopImageUrl.startsWith('https://static.ah.nl/') ||
+                    req.body.shopImageUrl.startsWith('https://static-images.jumbo.com/')
+                )
+            ) {
+                return res.status(400).send('Unsupported shop image url');
+            }
 
             const newProduct = await transaction(Product.knex(), async trx => {
                 let shops = [];
@@ -37,8 +48,12 @@ module.exports = [
                     extension = '';
                 if (typeof req.body.name === 'string') {
                     filename = `${_.kebabCase(req.body.name.substring(0, 64))}-${uuid()}`;
-                    extension = req.file.mimetype.split('/').pop();
+                    extension = req.file
+                        ? req.file.mimetype.split('/').pop()
+                        : req.body.shopImageUrl.split('.').pop();
                 }
+
+                console.log(filename, '()()', extension);
 
                 const insertedProduct = await Product.query(trx)
                     .upsertGraph(
@@ -57,11 +72,20 @@ module.exports = [
                     )
                     .eager('[brand, shops, categories, tags, barcodes]');
 
-                const data = await S3Image.uploadWithThumbs({
+                let fileBody;
+
+                if (req.file) {
+                    fileBody = req.file.buffer;
+                } else {
+                    const externalImage = await fetch(req.body.shopImageUrl);
+                    fileBody = await externalImage.buffer();
+                }
+
+                await S3Image.uploadWithThumbs({
                     path: `products`,
                     filename,
                     extension,
-                    body: req.file.buffer,
+                    body: fileBody,
                 });
 
                 return insertedProduct;

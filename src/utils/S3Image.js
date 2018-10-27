@@ -4,11 +4,21 @@ const sharp = require('sharp');
 const s3 = new AWS.S3({endpoint: `${process.env.AWS_ENDPOINT}`});
 
 const upload = async ({path, filename, extension, body}) => {
+    let ContentType;
+    if (['jpeg', 'jpg'].includes(extension.toLowerCase())) {
+        ContentType = 'image/jpeg';
+    } else if (extension.toLowerCase() === 'png') {
+        ContentType = 'image/png';
+    } else {
+        throw new Error('Unsupported mimetype');
+    }
+
     const params = {
         Bucket: process.env.AWS_BUCKET,
         ACL: 'public-read',
         Key: `${path}/${filename}.${extension}`,
         Body: body,
+        ContentType,
     };
     return new Promise((resolve, reject) => {
         s3.upload(params, (err, data) => {
@@ -27,7 +37,6 @@ const uploadWithThumbs = async ({path, filename, extension, body}) => {
         .rotate()
         .resize(180, 180)
         .toBuffer();
-    await upload({path, filename, extension, body});
     await upload({path, filename: `${filename}.large`, extension, body: large});
     await upload({path, filename: `${filename}.small`, extension, body: small});
 };

@@ -1,5 +1,7 @@
 const {Model} = require('objection');
 
+const getFileUrl = require('../utils/getFileUrl');
+
 class ShopModel extends Model {
     static get tableName() {
         return 'shop';
@@ -14,9 +16,7 @@ class ShopModel extends Model {
     }
 
     get imageUrl() {
-        return `https://${process.env.AWS_BUCKET}.${process.env.AWS_ENDPOINT}/shops/${
-            this.code
-        }.png`;
+        return getFileUrl({type: 'shop', filename: `${this.code}.png`});
     }
 
     static get relationMappings() {

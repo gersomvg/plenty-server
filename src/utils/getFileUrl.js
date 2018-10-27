@@ -1,4 +1,5 @@
 const getFileUrl = ({filename, size, type}) => {
+    if (!filename) return null;
     const parts = filename.split('.');
     const extension = parts.pop();
     const newFilename = `${parts.join('')}.${size ? `${size}.` : ''}${extension}`;

@@ -5,6 +5,10 @@ class SearchIndex extends Model {
         return 'searchIndex';
     }
 
+    static get idColumn() {
+        return 'productId';
+    }
+
     static get relationMappings() {
         const Product = require('./product');
         return {

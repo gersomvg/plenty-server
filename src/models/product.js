@@ -1,11 +1,6 @@
 const {Model} = require('objection');
 
-const getFileUrl = (filename, size) => {
-    const parts = filename.split('.');
-    const extension = parts.pop();
-    const newFilename = `${parts.join('')}.${size}.${extension}`;
-    return `https://${process.env.AWS_BUCKET}.${process.env.AWS_ENDPOINT}/products/${newFilename}`;
-};
+const getFileUrl = require('../utils/getFileUrl');
 
 class ProductModel extends Model {
     static get tableName() {
@@ -13,15 +8,33 @@ class ProductModel extends Model {
     }
 
     static get virtualAttributes() {
-        return ['imageUrl', 'thumbUrl'];
+        return [
+            'customThumbUrl',
+            'customImageUrl',
+            'officialThumbUrl',
+            'officialImageUrl',
+            'thumbUrl',
+            'imageUrl',
+        ];
     }
 
-    get imageUrl() {
-        return getFileUrl(this.filename, 'large');
+    get customThumbUrl() {
+        return getFileUrl({filename: this.customImage, type: 'product', size: 'small'});
     }
-
+    get customImageUrl() {
+        return getFileUrl({filename: this.customImage, type: 'product', size: 'large'});
+    }
+    get officialThumbUrl() {
+        return getFileUrl({filename: this.officialImage, type: 'product', size: 'small'});
+    }
+    get officialImageUrl() {
+        return getFileUrl({filename: this.officialImage, type: 'product', size: 'large'});
+    }
     get thumbUrl() {
-        return getFileUrl(this.filename, 'small');
+        return this.officialImage ? this.officialThumbUrl : this.customThumbUrl;
+    }
+    get imageUrl() {
+        return this.officialImage ? this.officialImageUrl : this.customImageUrl;
     }
 
     static get relationMappings() {
@@ -113,7 +126,8 @@ class ProductModel extends Model {
         if (obj.barcodes) {
             obj.barcodes = obj.barcodes.map(bcObj => bcObj.code);
         }
-        delete obj.filename;
+        delete obj.customImage;
+        delete obj.officialImage;
         return obj;
     }
 

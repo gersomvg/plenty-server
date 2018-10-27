@@ -25,4 +25,7 @@ router.get('/feedback', require('./feedback/get'));
 router.post('/feedback', require('./feedback/post'));
 router.patch('/feedback/:id', require('./feedback/patch'));
 
+router.get('/scrape', require('./scrape/get'));
+router.get('/scrape/details', require('./scrape/details'));
+
 module.exports = router;
