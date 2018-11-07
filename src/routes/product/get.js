@@ -30,6 +30,7 @@ const validator = new Ajv({allErrors: true}).compile({
         shopCode: {type: 'string', pattern: '^[a-z]*$'},
         withoutTag: {type: 'string', pattern: '^(true|false)?$'},
         withoutBarcode: {type: 'string', pattern: '^(true|false)?$'},
+        archived: {type: 'string', pattern: '^(true|false)$'},
         limit: {type: 'string', pattern: '^\\d{1,2}$'},
         offset: {type: 'string', pattern: '^\\d+$'},
         classifications: {type: 'string', pattern: '^((YES|MAYBE|NO)(,(YES|MAYBE|NO))*)?$'},
@@ -154,6 +155,7 @@ module.exports = async (req, res) => {
         if (req.query.withoutBarcode === 'true') {
             query.whereNotExists(knex('barcode').whereRaw('product_id = product.id'));
         }
+        query.where({archived: req.query.archived === 'true'});
 
         query.orderBy('product.createdAt', 'desc').orderBy('product.updatedAt', 'desc');
 
