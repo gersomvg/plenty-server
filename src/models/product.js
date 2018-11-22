@@ -116,6 +116,7 @@ class ProductModel extends Model {
                     enum: ['YES', 'MAYBE', 'NO'],
                 },
                 brandId: {type: 'integer'},
+                archived: {type: 'boolean'},
             },
         };
     }
