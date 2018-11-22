@@ -10,6 +10,7 @@ router.get('/product/:id', require('./product/getOne'));
 router.get('/product/barcode/:barcode', require('./product/getOneByBarcode'));
 router.post('/product', require('./product/post'));
 router.put('/product/:id', require('./product/put'));
+router.patch('/product/:id', require('./product/patch'));
 
 router.get('/shop', require('./shop/get'));
 
