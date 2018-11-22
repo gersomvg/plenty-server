@@ -102,13 +102,18 @@ class ProductModel extends Model {
     static get jsonSchema() {
         return {
             type: 'object',
-            required: ['name', 'filename', 'classification', 'brandId'],
+            required: ['name', 'classification', 'brandId'],
             properties: {
                 id: {type: 'integer'},
                 name: {type: 'string', pattern: '\\S+', maxLength: 255},
                 explanation: {type: 'string', maxLength: 1000},
-                filename: {
-                    type: 'string',
+                customImage: {
+                    type: ['string', 'null'],
+                    pattern: '^[\\w,\\s-]+.[A-Za-z]{3,4}$',
+                    maxLength: 255,
+                },
+                officialImage: {
+                    type: ['string', 'null'],
                     pattern: '^[\\w,\\s-]+.[A-Za-z]{3,4}$',
                     maxLength: 255,
                 },

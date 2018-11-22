@@ -12,10 +12,6 @@ exports.up = async knex => {
 exports.down = async knex => {
     await knex.schema.alterTable('product', table => {
         table.dropColumn('officialImage');
-        table
-            .string('customImage')
-            .notNullable()
-            .alter();
         table.renameColumn('customImage', 'filename');
     });
 };
