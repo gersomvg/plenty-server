@@ -1,5 +1,4 @@
 const Ajv = require('ajv');
-const puppeteer = require('puppeteer');
 
 const authMiddleware = require('../../utils/authMiddleware');
 const getAhList = require('./supermarkets/ahList');
@@ -19,10 +18,9 @@ module.exports = [
     async (req, res) => {
         if (!validator(req.query)) return res.status(400).send({error: validator.errors});
         try {
-            const browser = await puppeteer.launch();
             const searchQuery = req.query.name;
             const [ah, jumbo] = await Promise.all([
-                getAhList({browser, searchQuery}),
+                getAhList({searchQuery}),
                 getJumboList({searchQuery}),
             ]);
             res.send({ah, jumbo});
